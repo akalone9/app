@@ -1,10 +1,10 @@
 const CACHE_NAME = "myapp-cache";
 const urlsToCache = [
-  "./app/",
-  "./app/index.html",
-  "./app/style.css",
-  "./app/manifest.json",
-  "./app/icon144.png",
+  "./",
+  "./index.html",
+  "./style.css",
+  "./manifest.json",
+  "./icon144.png",
 ];
 
 // Install event
