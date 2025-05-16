@@ -115,8 +115,10 @@
             // Check if the user is offline
             let msgCode_HTML = `<label>  You're offline </label> <p> “Please Check Your Internet Connection And Try Again”`;
             openMsg(msgCode_HTML);
-          }
+          } else {
             event.preventDefault(); // Prevent the default link action
+          }
+            
         });
       });
     </script>
