@@ -1,6 +1,7 @@
 {
   "short_name": "MyApp",
   "name": "Alone Web App",
+  "description": "This Web App Created by AK",
   "icons": [
     {
       "src": "iconPink.png",
