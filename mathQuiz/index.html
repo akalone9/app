@@ -156,7 +156,7 @@
       z-index: 3;
     }
 
-    .game-over button, .start-button {
+    .game-over button {
       margin-top: 20px;
       padding: 10px 20px;
       font-size: 15px;
@@ -174,23 +174,18 @@
       left: 50%;
       transform: translate(-50%, -50%);
       z-index: 2;
+      padding: 15px 25px;
+      font-size: 22px;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
     }
 
     .start-button:hover, .game-over button:hover {
       background-color: #388E3C;
-    }
-
-    .credit {
-      position: absolute;
-      bottom: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0,0,0,0.6);
-      color: white;
-      padding: 8px 16px;
-      border-radius: 12px;
-      font-size: 14px;
-      z-index: 2;
     }
   </style>
 </head>
@@ -212,8 +207,6 @@
 </div>
 
 <button class="start-button" id="start-btn" onclick="startGame()">Start Game</button>
-
-<div class="credit" id="credit">by Amit Alone</div>
 
 <script>
   let score = 0;
