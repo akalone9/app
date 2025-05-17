@@ -1,46 +1,257 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" href="icon.png" type="image/x-icon" />
-    <meta name="theme-color" content="#0a0519" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="#0a0519" />
-    <meta name="msapplication-navbutton-color" content="#0a0519">
-    <title>TicTacToe Game</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <main>
-      <header id="header">
-        <div
-          class="player player-active"
-          id="xPlayerDisplay"
-          onclick="choosePlayer('X')"
-        >
-          X
-        </div>
-        <h3 id="titleHeader">Choose</h3>
-        <div class="player" id="oPlayerDisplay" onclick="choosePlayer('O')">
-          O
-        </div>
-      </header>
+    <meta name="theme-color" content="#2a5298" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="#2a5298" />
+    <meta name="msapplication-navbutton-color" content="#2a5298">
+    <title> TicTacToe </title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Segoe UI', sans-serif;
+      background: #2a5298;
+      color: white;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .game-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      position: relative;
+    }
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 10px;
+      text-align: center;
+      text-shadow: 2px 2px #000;
+    }
+    .top-info {
+      position: absolute;
+      top: 30px;
+      text-align: center;
+    }
+    .status {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    .timer {
+      font-size: 1.2rem;
+      margin-top: 5px;
+      color: #f1c40f;
+    }
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      gap: 15px;
+      margin-top: 100px;
+    }
+    .cell {
+      width: 100px;
+      height: 100px;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(5px);
+      border-radius: 15px;
+      font-size: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+      position: relative;
+    }
+    .cell:hover {
+      background: rgba(255,255,255,0.2);
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
 
-      <div id="board">
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-      </div>
+  <div class="game-container">
+    <div class="top-info">
+      <h1>Tic Tac Toe</h1>
+      <div class="status" id="status">Your Turn</div>
+      <div class="timer" id="timer"></div>
+    </div>
+    <div class="board" id="board"></div>
+  </div>
 
-      <button id="restartBtn">Restart</button>
-    </main>
+  <script>
+    const boardElement = document.getElementById("board");
+    const statusElement = document.getElementById("status");
+    const timerElement = document.getElementById("timer");
 
-    <script src="script.js"></script>
-  </body>
+    let board = ["", "", "", "", "", "", "", "", ""];
+    let gameActive = true;
+    let countdownInterval;
+    let clearTimeouts = Array(9).fill(null); // timeout IDs for each cell
+
+    function createBoard() {
+      boardElement.innerHTML = "";
+      board.forEach((cell, index) => {
+        const cellElement = document.createElement("div");
+        cellElement.classList.add("cell");
+        cellElement.innerText = cell;
+        cellElement.addEventListener("click", () => handleCellClick(index));
+        boardElement.appendChild(cellElement);
+      });
+    }
+
+    function handleCellClick(index) {
+      if (!gameActive || board[index] !== "") return;
+      board[index] = "X";
+      setClearTimer(index);
+      updateBoard();
+      if (checkWinner(board, "X")) {
+        statusElement.innerText = "You Win!";
+        endGame();
+        return;
+      } else if (board.every(cell => cell !== "")) {
+        statusElement.innerText = "Draw!";
+        endGame();
+        return;
+      }
+      statusElement.innerText = "Computer Thinking...";
+      setTimeout(computerMove, 600);
+    }
+
+    function computerMove() {
+      const move = getBestMove();
+      if (move !== -1) {
+        board[move] = "O";
+        setClearTimer(move);
+        updateBoard();
+        if (checkWinner(board, "O")) {
+          statusElement.innerText = "Computer Wins!";
+          endGame();
+        } else if (board.every(cell => cell !== "")) {
+          statusElement.innerText = "Draw!";
+          endGame();
+        } else {
+          statusElement.innerText = "Your Turn";
+        }
+      }
+    }
+
+    function updateBoard() {
+      const cells = document.querySelectorAll(".cell");
+      board.forEach((val, idx) => {
+        cells[idx].innerText = val;
+      });
+    }
+
+    function getBestMove() {
+      let bestScore = -Infinity;
+      let move = -1;
+      for (let i = 0; i < board.length; i++) {
+        if (board[i] === "") {
+          board[i] = "O";
+          let score = minimax(board, 0, false);
+          board[i] = "";
+          if (score > bestScore) {
+            bestScore = score;
+            move = i;
+          }
+        }
+      }
+      return move;
+    }
+
+    function minimax(newBoard, depth, isMaximizing) {
+      if (checkWinner(newBoard, "O")) return 10 - depth;
+      if (checkWinner(newBoard, "X")) return depth - 10;
+      if (newBoard.every(cell => cell !== "")) return 0;
+
+      if (isMaximizing) {
+        let best = -Infinity;
+        for (let i = 0; i < newBoard.length; i++) {
+          if (newBoard[i] === "") {
+            newBoard[i] = "O";
+            best = Math.max(best, minimax(newBoard, depth + 1, false));
+            newBoard[i] = "";
+          }
+        }
+        return best;
+      } else {
+        let best = Infinity;
+        for (let i = 0; i < newBoard.length; i++) {
+          if (newBoard[i] === "") {
+            newBoard[i] = "X";
+            best = Math.min(best, minimax(newBoard, depth + 1, true));
+            newBoard[i] = "";
+          }
+        }
+        return best;
+      }
+    }
+
+    function checkWinner(b, p) {
+      const wins = [
+        [0,1,2],[3,4,5],[6,7,8],
+        [0,3,6],[1,4,7],[2,5,8],
+        [0,4,8],[2,4,6]
+      ];
+      return wins.some(combo => combo.every(i => b[i] === p));
+    }
+
+    function endGame() {
+      gameActive = false;
+      clearAllTimers();
+      startCountdown();
+    }
+
+    function restartGame() {
+      board = ["", "", "", "", "", "", "", "", ""];
+      gameActive = true;
+      clearTimeouts = Array(9).fill(null);
+      timerElement.innerText = "";
+      statusElement.innerText = "Your Turn";
+      createBoard();
+    }
+
+    function startCountdown() {
+      let timeLeft = 5;
+      timerElement.innerText = `Restarting in ${timeLeft}...`;
+      countdownInterval = setInterval(() => {
+        timeLeft--;
+        if (timeLeft > 0) {
+          timerElement.innerText = `Restarting in ${timeLeft}...`;
+        } else {
+          clearInterval(countdownInterval);
+          restartGame();
+        }
+      }, 1000);
+    }
+
+    function setClearTimer(index) {
+      if (clearTimeouts[index]) clearTimeout(clearTimeouts[index]);
+      clearTimeouts[index] = setTimeout(() => {
+        board[index] = "";
+        updateBoard();
+      }, 10000); // 10 seconds
+    }
+
+    function clearAllTimers() {
+      clearTimeouts.forEach(timer => {
+        if (timer) clearTimeout(timer);
+      });
+    }
+
+    createBoard();
+  </script>
+
+</body>
 </html>
