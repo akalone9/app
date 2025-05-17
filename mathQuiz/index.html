@@ -1,317 +1,314 @@
 <!DOCTYPE html>
 <html lang="hi">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#87CEFA" />
-  <meta name="msapplication-navbutton-color" content="#87CEFA">
-  <meta name="apple-mobile-web-app-status-bar-style" content="#87CEFA" />
-  <title> Math Game </title>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: #87CEFA;
-      overflow: hidden;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#87CEFA" />
+    <meta name="msapplication-navbutton-color" content="#87CEFA" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="#87CEFA" />
+    <title>Math Game</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: "Segoe UI", sans-serif;
+        background: #87cefa;
+        overflow: hidden;
+      }
 
-    .sun {
-      position: absolute;
-      top: 20px;
-      right: 60px;
-      width: 80px;
-      height: 80px;
-      background: radial-gradient(circle, yellow 60%, orange 100%);
-      border-radius: 50%;
-      animation: shine 2s linear infinite;
-      box-shadow: 0 0 30px 10px yellow;
-      z-index: -2;
-    }
+      .sun {
+        position: absolute;
+        top: 20px;
+        right: 60px;
+        width: 80px;
+        height: 80px;
+        background: radial-gradient(circle, yellow 60%, orange 100%);
+        border-radius: 50%;
+        animation: shine 2s linear infinite;
+        box-shadow: 0 0 30px 10px yellow;
+        z-index: -2;
+      }
 
-    @keyframes shine {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.1); opacity: 0.8; }
-    }
-
-    .cloud {
-      position: absolute;
-      background: white;
-      border-radius: 50%;
-      opacity: 0.9;
-      animation-name: floatCloud;
-      animation-timing-function: linear;
-      animation-iteration-count: infinite;
-      z-index: -1;
-    }
-
-    .cloud::before, .cloud::after {
-      content: '';
-      position: absolute;
-      background: white;
-      border-radius: 50%;
-    }
-
-    .cloud::before {
-      width: 50px;
-      height: 50px;
-      top: -25px;
-      left: 10px;
-    }
-
-    .cloud::after {
-      width: 40px;
-      height: 40px;
-      top: -15px;
-      left: 40px;
-    }
-
-    @keyframes floatCloud {
-      0% { left: -120px; }
-      100% { left: 110%; }
-    }
-
-    .score, .timer {
-      position: absolute;
-      width: 40px;
-      height: 40px;
-      background: white;
-      border-radius: 50%;
-      text-align: center;
-      line-height: 40px;
-      font-size: 17px;
-      font-weight: bold;
-      box-shadow: 0 0 6px #333;
-      z-index: 2;
-    }
-
-    .timer {
-      top: 20px;
-      right: 20px;
-      display: none;
-      border-color: red;
-    }
-
-    .score {
-      top: 20px;
-      left: 20px;
-      border-color: green;
-    }
-
-    .question-box {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(255, 255, 255, 0.8);
-      padding: 20px;
-      border-radius: 16px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.4);
-      text-align: center;
-      width: 265px;
-      display: none;
-      z-index: 2;
-    }
-
-    .question {
-      font-size: 25px;
-      font-weight: bold;
-      color: #1a237e;
-      margin-bottom: 25px;
-    }
-
-    .options {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 12px;
-    }
-
-    .options button {
-      padding: 10px;
-      font-size: 18px;
-      font-weight: bold;
-      border-radius: 6px;
-      border: none;
-      background: linear-gradient(to right, #81d4fa, #29b6f6);
-      color: #004d40;
-      cursor: pointer;
-      transition: transform 0.2s ease, background 0.3s;
-    }
-
-    .options button:hover {
-      transform: scale(1.05);
-      background: linear-gradient(to right, #b3e5fc, #4fc3f7);
-    }
-
-    .game-over {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 24px;
-      background: rgba(255,255,255,0.95);
-      padding: 30px;
-      border-radius: 16px;
-      display: none;
-      text-align: center;
-      z-index: 3;
-    }
-
-    .game-over button {
-      margin-top: 20px;
-      padding: 10px 20px;
-      font-size: 15px;
-      font-weight: bold;
-      border: none;
-      border-radius: 8px;
-      background-color: #4CAF50;
-      color: white;
-      cursor: pointer;
-    }
-
-    .start-button {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 2;
-      padding: 15px 25px;
-      font-size: 22px;
-      font-weight: bold;
-      border: none;
-      border-radius: 10px;
-      background-color: #4CAF50;
-      color: white;
-      cursor: pointer;
-    }
-
-    .start-button:hover, .game-over button:hover {
-      background-color: #388E3C;
-    }
-  </style>
-</head>
-<body>
-
-<div class="sun"></div>
-<div class="timer" id="timer">20</div>
-<div class="score" id="score">0</div>
-
-<div class="question-box" id="question-box">
-  <div class="question" id="question">Loading...</div>
-  <div class="options" id="options"></div>
-</div>
-
-<div class="game-over" id="game-over">
-  Game Over<br>
-  Final Score: <span id="final-score">0</span><br>
-  <button onclick="restartGame()">Restart</button>
-</div>
-
-<button class="start-button" id="start-btn" onclick="startGame()">Start Game</button>
-
-<script>
-  let score = 0;
-  let inactivityTime = 20;
-  let inactivityTimer = null;
-
-  const questionBox = document.getElementById('question-box');
-  const questionEl = document.getElementById('question');
-  const optionsEl = document.getElementById('options');
-  const scoreEl = document.getElementById('score');
-  const timerEl = document.getElementById('timer');
-  const gameOverEl = document.getElementById('game-over');
-  const startBtn = document.getElementById('start-btn');
-  const credit = document.getElementById('credit');
-  const finalScore = document.getElementById('final-score');
-
-  function generateQuestion() {
-    const num1 = Math.floor(Math.random() * 10);
-    const num2 = Math.floor(Math.random() * 10);
-    const correct = num1 + num2;
-    const question = `${num1} + ${num2} = ?`;
-    const answers = [correct];
-
-    while (answers.length < 4) {
-      let wrong = Math.floor(Math.random() * 20);
-      if (!answers.includes(wrong)) answers.push(wrong);
-    }
-
-    shuffleArray(answers);
-    questionEl.textContent = question;
-    optionsEl.innerHTML = '';
-    answers.forEach(ans => {
-      const btn = document.createElement('button');
-      btn.textContent = ans;
-      btn.onclick = () => {
-        resetInactivityTimer();
-        if (ans === correct) {
-          score++;
-        } else {
-          score--;
+      @keyframes shine {
+        0%,
+        100% {
+          transform: scale(1);
+          opacity: 1;
         }
+        50% {
+          transform: scale(1.1);
+          opacity: 0.8;
+        }
+      }
+
+      .cloud {
+        position: absolute;
+        background: white;
+        border-radius: 50%;
+        opacity: 0.9;
+        animation-name: floatCloud;
+        animation-timing-function: linear;
+        animation-iteration-count: infinite;
+        z-index: -1;
+      }
+
+      .cloud::before,
+      .cloud::after {
+        content: "";
+        position: absolute;
+        background: white;
+        border-radius: 50%;
+      }
+
+      .cloud::before {
+        width: 50px;
+        height: 50px;
+        top: -25px;
+        left: 10px;
+      }
+
+      .cloud::after {
+        width: 40px;
+        height: 40px;
+        top: -15px;
+        left: 40px;
+      }
+
+      @keyframes floatCloud {
+        0% {
+          left: -120px;
+        }
+        100% {
+          left: 110%;
+        }
+      }
+
+      .score,
+      .timer {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        background: white;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 40px;
+        font-size: 17px;
+        font-weight: bold;
+        box-shadow: 0 0 6px #333;
+        z-index: 2;
+      }
+
+      .timer {
+        top: 20px;
+        right: 20px;
+      }
+
+      .score {
+        top: 20px;
+        left: 20px;
+      }
+
+      .question-box {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(255, 255, 255, 0.8);
+        padding: 20px;
+        border-radius: 16px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+        text-align: center;
+        width: 260px;
+        display: none;
+        z-index: 2;
+      }
+
+      .question {
+        font-size: 20px;
+        font-weight: bold;
+        color: #1a237e;
+        margin-bottom: 15px;
+      }
+
+      .options {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .options button {
+        padding: 10px;
+        font-size: 18px;
+        font-weight: bold;
+        border-radius: 6px;
+        border: none;
+        background: linear-gradient(to right, #81d4fa, #29b6f6);
+        color: #004d40;
+        cursor: pointer;
+        transition: transform 0.2s ease, background 0.3s;
+      }
+
+      .options button:hover {
+        transform: scale(1.05);
+        background: linear-gradient(to right, #b3e5fc, #4fc3f7);
+      }
+
+      .game-over {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 24px;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 30px;
+        border-radius: 16px;
+        display: none;
+        text-align: center;
+        z-index: 3;
+      }
+
+      .game-over button,
+      .start-button {
+        margin-top: 20px;
+        padding: 10px 20px;
+        font-size: 15px;
+        font-weight: bold;
+        border: none;
+        border-radius: 8px;
+        background-color: #4caf50;
+        color: white;
+        cursor: pointer;
+      }
+
+      .start-button {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 2;
+      }
+
+      .start-button:hover,
+      .game-over button:hover {
+        background-color: #388e3c;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sun"></div>
+    <div class="timer" id="timer">20</div>
+    <div class="score" id="score">0</div>
+
+    <div class="question-box" id="question-box">
+      <div class="question" id="question">Loading...</div>
+      <div class="options" id="options"></div>
+    </div>
+
+    <div class="game-over" id="game-over">
+      Game Over<br />
+      Final Score: <span id="final-score">0</span><br />
+      <button onclick="restartGame()">Restart</button>
+    </div>
+
+    <button class="start-button" id="start-btn" onclick="startGame()">
+      Start Game
+    </button>
+
+    <script>
+      let score = 0;
+      let inactivityTime = 20;
+      let inactivityTimer = null;
+
+      const questionBox = document.getElementById("question-box");
+      const questionEl = document.getElementById("question");
+      const optionsEl = document.getElementById("options");
+      const scoreEl = document.getElementById("score");
+      const timerEl = document.getElementById("timer");
+      const gameOverEl = document.getElementById("game-over");
+      const startBtn = document.getElementById("start-btn");
+      const finalScore = document.getElementById("final-score");
+
+      function generateQuestion() {
+        const num1 = Math.floor(Math.random() * 10);
+        const num2 = Math.floor(Math.random() * 10);
+        const correct = num1 + num2;
+        const question = `${num1} + ${num2} = ?`;
+        const answers = [correct];
+
+        while (answers.length < 4) {
+          let wrong = Math.floor(Math.random() * 20);
+          if (!answers.includes(wrong)) answers.push(wrong);
+        }
+
+        shuffleArray(answers);
+        questionEl.textContent = question;
+        optionsEl.innerHTML = "";
+        answers.forEach((ans) => {
+          const btn = document.createElement("button");
+          btn.textContent = ans;
+          btn.onclick = () => {
+            resetInactivityTimer();
+            if (ans === correct) {
+              score++;
+            } else {
+              score--;
+            }
+            scoreEl.textContent = score;
+            generateQuestion();
+          };
+          optionsEl.appendChild(btn);
+        });
+      }
+
+      function shuffleArray(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+          let j = Math.floor(Math.random() * (i + 1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+      }
+
+      function startGame() {
+        startBtn.style.display = "none";
+        gameOverEl.style.display = "none";
+        questionBox.style.display = "block";
+        score = 0;
         scoreEl.textContent = score;
         generateQuestion();
-      };
-      optionsEl.appendChild(btn);
-    });
-  }
-
-  function shuffleArray(arr) {
-    for (let i = arr.length - 1; i > 0; i--) {
-      let j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-  }
-
-  function startGame() {
-    startBtn.style.display = 'none';
-    credit.style.display = 'none';
-    gameOverEl.style.display = 'none';
-    questionBox.style.display = 'block';
-    score = 0;
-    scoreEl.textContent = score;
-    generateQuestion();
-    resetInactivityTimer();
-  }
-
-  function resetInactivityTimer() {
-    clearInterval(inactivityTimer);
-    timerEl.style.display = 'none';
-    inactivityTime = 20;
-    inactivityTimer = setInterval(() => {
-      inactivityTime--;
-      timerEl.textContent = inactivityTime;
-      if (inactivityTime === 0) {
-        clearInterval(inactivityTimer);
-        questionBox.style.display = 'none';
-        finalScore.textContent = score;
-        gameOverEl.style.display = 'block';
-        credit.style.display = 'block';
+        resetInactivityTimer();
       }
-    }, 1000);
-    setTimeout(() => {
-      timerEl.style.display = 'block';
-    }, 3000);
-  }
 
-  function restartGame() {
-    gameOverEl.style.display = 'none';
-    startGame();
-  }
+      function resetInactivityTimer() {
+        clearInterval(inactivityTimer);
+        inactivityTime = 21;
+        inactivityTimer = setInterval(() => {
+          inactivityTime--;
+          timerEl.textContent = inactivityTime;
+          if (inactivityTime === 0) {
+            clearInterval(inactivityTimer);
+            questionBox.style.display = "none";
+            finalScore.textContent = score;
+            gameOverEl.style.display = "block";
+          }
+        }, 1000);
+      }
 
-  function createClouds() {
-    for (let i = 0; i < 6; i++) {
-      const cloud = document.createElement('div');
-      cloud.classList.add('cloud');
-      cloud.style.top = `${Math.random() * 250 + 30}px`;
-      cloud.style.width = `100px`;
-      cloud.style.height = `40px`;
-      cloud.style.animationDuration = `${20 + Math.random() * 15}s`;
-      document.body.appendChild(cloud);
-    }
-  }
+      function restartGame() {
+        gameOverEl.style.display = "none";
+        startGame();
+      }
 
-  createClouds();
-</script>
+      function createClouds() {
+        for (let i = 0; i < 6; i++) {
+          const cloud = document.createElement("div");
+          cloud.classList.add("cloud");
+          cloud.style.top = `${Math.random() * 250 + 30}px`;
+          cloud.style.width = `100px`;
+          cloud.style.height = `40px`;
+          cloud.style.animationDuration = `${20 + Math.random() * 15}s`;
+          document.body.appendChild(cloud);
+        }
+      }
 
-</body>
+      createClouds();
+    </script>
+  </body>
 </html>
