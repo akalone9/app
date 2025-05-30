@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="hi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Position Selector</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background: linear-gradient(0deg, #ffb6c1 0%, #b20a2c 100%);
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        padding: 20px;
+      }
+      h1 {
+        color: #ffffff;
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        transition: opacity 0.5s ease;
+      }
+      .hidden-header {
+        opacity: 0;
+        pointer-events: none;
+      }
+      .hint-wrapper {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        margin-bottom: 10px;
+      }
+      #hint {
+        background: #ffe0f0;
+        color: #b20a2c;
+        font-size: 1.1rem;
+        padding: 12px 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        animation: fadeInOut 4s ease-in-out forwards;
+        display: none;
+        text-align: center;
+      }
+      .game-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 15px;
+        padding: 20px;
+        background: #ffffffdd;
+        border-radius: 20px;
+        max-width: 550px;
+        width: 100%;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(10px);
+        margin-bottom: 20px;
+        transition: all 0.5s ease;
+      }
+      .card {
+        position: relative;
+        aspect-ratio: 0.9 / 1;
+        border-radius: 15px;
+        overflow: hidden;
+        cursor: pointer;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        background-color: white;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.4s ease, box-shadow 0.4s ease;
+      }
+      .card.active {
+        transform: scale(1.08);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+        z-index: 2;
+      }
+      .card img {
+        width: 100%;
+        object-fit: cover;
+        flex-grow: 1;
+      }
+      canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 2;
+        border-radius: 15px;
+        transition: opacity 1s ease-out;
+      }
+      .hidden {
+        display: none !important;
+      }
+      #restartBtn {
+        padding: 10px 20px;
+        background-color: #c2185b;
+        color: white;
+        font-size: 1rem;
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        display: none;
+        margin-top: 5px;
+      }
+      #restartBtn:hover {
+        background-color: #ad1457;
+      }
+      .description {
+        background: #fff3e0;
+        color: #4e342e;
+        padding: 10px;
+        font-size: 0.9rem;
+        border-top: 2px solid #ff7043;
+        animation: slideUp 1s forwards;
+        transform: translateY(100%);
+        opacity: 0;
+      }
+      .description h3 {
+        font-size: 1.1rem;
+        color: #d84315;
+        margin-bottom: 5px;
+      }
+      .description p {
+        font-weight: 500;
+        line-height: 1.4;
+      }
+      @keyframes slideUp {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes fadeInOut {
+        0% {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        20% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        80% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1 id="gameHeader">Select a Position</h1>
+    <div class="hint-wrapper">
+      <div id="hint">💡 Double Click to View Image</div>
+    </div>
+    <div class="game-container" id="gameContainer"></div>
+    <button id="restartBtn" onclick="restartGame()">Restart</button>
+    <script>
+      const totalImages = [
+        {
+          src: "img/1.png",
+          title: "Stand and Deliver",
+          desc: "यह एक सुंदर रंग-बिरंगा पक्षी है जो वसंत ऋतु में प्रकट होता है।",
+        },
+        {
+          src: "img/2.png",
+          title: "Face Off",
+          desc: "यह पक्षी अपनी मधुर आवाज़ के लिए प्रसिद्ध है।",
+        },
+        {
+          src: "img/3.png",
+          title: "The Socket",
+          desc: "यह पक्षी लंबी उड़ानों के लिए जाना जाता है।",
+        },
+        {
+          src: "img/4.png",
+          title: "Happy Baby",
+          desc: "यह पक्षी हिमालय के पर्वतीय क्षेत्रों में पाया जाता है।",
+        },
+        {
+          src: "img/5.png",
+          title: "Standing O",
+          desc: "यह पक्षी अक्सर झुंड में उड़ते देखे जाते हैं।",
+        },
+        {
+          src: "img/6.png",
+          title: "The Little Dipper",
+          desc: "इसकी चोंच विशेष रूप से भोजन खोजने के लिए अनुकूलित है।",
+        },
+        {
+          src: "img/7.png",
+          title: "The 69 Bridge",
+          desc: "यह पक्षी जलाशयों के किनारे अधिकतर देखा जाता है।",
+        },
+        {
+          src: "img/8.png",
+          title: "The Captain",
+          desc: "यह अपनी रंग-बिरंगी पंखों के लिए प्रसिद्ध है।",
+        },
+        {
+          src: "img/9.png",
+          title: "Waterfall",
+          desc: "यह पक्षी गर्म क्षेत्रों में प्रवास करता है।",
+        },
+        {
+          src: "img/10.png",
+          title: "One Up",
+          desc: "यह पक्षी विभिन्न गीतों के माध्यम से संवाद करता है।",
+        },
+        {
+          src: "img/11.png",
+          title: "The Cowgirl",
+          desc: "यह पक्षी ऊँचे वृक्षों पर अपने घोंसले बनाता है।",
+        },
+        {
+          src: "img/12.png",
+          title: "The Hot Seat",
+          desc: "यह पक्षी उड़ते समय विशेष ध्वनि करता है।",
+        },
+        {
+          src: "img/13.png",
+          title: "Reverse Cowgirl",
+          desc: "यह पक्षी उड़ते समय विशेष ध्वनि करता है।",
+        },
+        {
+          src: "img/14.png",
+          title: "Pole Position",
+          desc: "यह पक्षी उड़ते समय विशेष ध्वनि करता है।",
+        },
+        {
+          src: "img/15.png",
+          title: "The Fusion",
+          desc: "यह पक्षी उड़ते समय विशेष ध्वनि करता है।",
+        },
+      ];
+      const selectedCount = 12;
+      const gameContainer = document.getElementById("gameContainer");
+      const restartBtn = document.getElementById("restartBtn");
+      const hint = document.getElementById("hint");
+      const gameHeader = document.getElementById("gameHeader");
+      let selectedCard = null;
+
+      function getRandomImages() {
+        const shuffled = totalImages.sort(() => 0.5 - Math.random());
+        return shuffled.slice(0, selectedCount);
+      }
+
+      function createCard(imgObj) {
+        const card = document.createElement("div");
+        card.className = "card";
+
+        const img = document.createElement("img");
+        img.src = imgObj.src;
+
+        const canvas = document.createElement("canvas");
+        canvas.width = 300;
+        canvas.height = 300;
+        canvas.style.width = "100%";
+        canvas.style.height = "100%";
+
+        const ctx = canvas.getContext("2d");
+        ctx.fillStyle = "#aaa";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const desc = document.createElement("div");
+        desc.className = "description";
+        desc.innerHTML = `<h3>${imgObj.title}</h3><p>${imgObj.desc}</p>`;
+        desc.style.display = "none";
+
+        card.appendChild(img);
+        card.appendChild(canvas);
+        card.appendChild(desc);
+        gameContainer.appendChild(card);
+
+        card.addEventListener("dblclick", () => {
+          if (selectedCard) return;
+          selectedCard = card;
+          card.classList.add("active");
+          gameHeader.classList.add("hidden-header");
+          Array.from(gameContainer.children).forEach((c) => {
+            if (c !== card) c.style.pointerEvents = "none";
+          });
+          autoScratch(canvas, () => {
+            canvas.remove();
+            showOnlyThisCard(card, desc);
+          });
+        });
+      }
+
+      function autoScratch(canvas, callback) {
+        const ctx = canvas.getContext("2d");
+        let radius = 15;
+        let totalPoints = 0;
+        const maxPoints = 300;
+        function draw() {
+          for (let i = 0; i < 10; i++) {
+            const x = Math.random() * canvas.width;
+            const y = Math.random() * canvas.height;
+            ctx.globalCompositeOperation = "destination-out";
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          totalPoints += 10;
+          if (totalPoints < maxPoints) {
+            requestAnimationFrame(draw);
+          } else {
+            canvas.style.opacity = 0;
+            setTimeout(callback, 800);
+          }
+        }
+        draw();
+      }
+
+      function showOnlyThisCard(card, descEl) {
+        Array.from(gameContainer.children).forEach((c) => {
+          if (c !== card) c.classList.add("hidden");
+        });
+        restartBtn.style.display = "inline-block";
+        descEl.style.display = "block";
+      }
+
+      function restartGame() {
+        gameContainer.innerHTML = "";
+        selectedCard = null;
+        restartBtn.style.display = "none";
+        gameHeader.classList.remove("hidden-header");
+        const images = getRandomImages();
+        images.forEach((imgObj) => createCard(imgObj));
+        showHint();
+      }
+
+      function showHint() {
+        hint.style.display = "block";
+        hint.style.animation = "fadeInOut 4s ease-in-out forwards";
+        setTimeout(() => {
+          hint.style.display = "none";
+        }, 3000);
+      }
+
+      restartGame();
+    </script>
+  </body>
+</html>
