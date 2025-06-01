@@ -373,6 +373,7 @@
         if (card.classList.contains("revealed")) return;
         if (wallet < costPerTry) {
           alert("Not enough balance!");
+          location.reload();
           return;
         }
 
