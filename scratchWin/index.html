@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Scratch & Win Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background: linear-gradient(0deg, #fceabb, #f8b500);
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .game-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        padding: 10px;
+      }
+
+      .top-bar {
+        width: 90vw;
+        max-width: 420px;
+        display: flex;
+        justify-content: space-between;
+        padding: 15px 20px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        background: #fff;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 20px;
+      }
+
+      .card {
+        width: 90vw;
+        max-width: 420px;
+        height: 260px;
+        margin: 30px 0 10px;
+        background: #aaa;
+        border-radius: 20px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: transparent;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+      }
+
+      .card.shaking {
+        animation: shake 0.3s ease;
+      }
+
+      @keyframes shake {
+        0% {
+          transform: rotate(0deg);
+        }
+        25% {
+          transform: rotate(2deg);
+        }
+        50% {
+          transform: rotate(-2deg);
+        }
+        75% {
+          transform: rotate(1deg);
+        }
+        100% {
+          transform: rotate(0deg);
+        }
+      }
+
+      .card.revealed {
+        background: #fff3c4;
+        color: #000;
+        transition: background 0.4s ease;
+      }
+
+      .scratch-layer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: repeating-linear-gradient(
+          -45deg,
+          #999,
+          #999 15px,
+          #aaa 15px,
+          #aaa 30px
+        );
+        z-index: 2;
+        opacity: 1;
+        pointer-events: none;
+        transition: opacity 0.5s ease;
+      }
+
+      .card.revealed .scratch-layer {
+        opacity: 0;
+      }
+
+      .fly {
+        position: absolute;
+        font-size: 2rem;
+        font-weight: bold;
+        animation: flyToWallet 1s ease-out forwards;
+        color: green;
+        z-index: 10;
+      }
+
+      @keyframes flyToWallet {
+        0% {
+          transform: translate(0, 0) scale(1);
+          opacity: 1;
+        }
+        100% {
+          transform: translate(200px, -150px) scale(0.5);
+          opacity: 0;
+        }
+      }
+
+      .wallet-amount.animated {
+        animation: bounce 0.5s ease;
+      }
+
+      @keyframes bounce {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.3);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+      }
+
+      .modal-content {
+        background: #fff;
+        padding: 30px;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      }
+
+      .modal-content input {
+        padding: 10px;
+        font-size: 1.2rem;
+        width: 100px;
+        margin-top: 10px;
+        text-align: center;
+      }
+
+      .modal-content button {
+        margin-top: 15px;
+        padding: 10px 20px;
+        font-size: 1rem;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+
+      .modal-content button:hover {
+        background-color: #218838;
+      }
+
+      .try-again {
+        margin-top: 15px;
+        padding: 10px 25px;
+        background: #007bff;
+        color: white;
+        font-size: 1.1rem;
+        font-weight: bold;
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        transition: background 0.3s ease;
+        display: none;
+      }
+
+      .try-again:hover {
+        background: #0056b3;
+      }
+
+      #hint {
+        margin-top: 10px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: #e91e63;
+        background: linear-gradient(90deg, #fbd786, #f7797d);
+        padding: 10px 20px;
+        border-radius: 15px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        animation: fadeInOut 3s forwards;
+        display: none;
+      }
+
+      @keyframes fadeInOut {
+        0% {
+          opacity: 0;
+          transform: scale(0.9);
+        }
+        10% {
+          opacity: 1;
+          transform: scale(1.1);
+        }
+        90% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0;
+          transform: scale(0.9);
+        }
+      }
+
+      /* 🎉 Celebration Modal */
+      #celebrationModal {
+        display: none;
+        position: fixed;
+        z-index: 2000;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.8);
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        color: #fff;
+        text-align: center;
+        animation: fadeIn 0.5s ease;
+      }
+
+      #celebrationModal img {
+        width: 150px;
+        animation: bounceCelebrate 1s infinite;
+        margin-bottom: 20px;
+      }
+
+      @keyframes bounceCelebrate {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-15px);
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @media screen and (max-width: 500px) {
+        .card {
+          height: 200px;
+          font-size: 2rem;
+        }
+
+        .modal-content {
+          width: 80%;
+        }
+
+        .top-bar {
+          padding: 12px 20px;
+          font-size: 1.1rem;
+          border-radius: 15px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="game-container">
+      <div class="top-bar">
+        <div>💰 Wallet: ₹<span class="wallet-amount" id="wallet">0</span></div>
+        <div>🎯: <span id="round">0</span></div>
+      </div>
+
+      <div class="card" id="scratchCard" onclick="scratchCard()">
+        <div id="resultText">???</div>
+        <div class="scratch-layer"></div>
+      </div>
+
+      <div id="hint">🎉 Scratch the card to reveal your reward!</div>
+
+      <button class="try-again" id="tryAgainBtn" onclick="resetCard()">
+        🔁 Try Again
+      </button>
+    </div>
+
+    <!-- Start Modal -->
+    <div class="modal" id="startModal">
+      <div class="modal-content">
+        <h2>🎮 Start Game</h2>
+        <p>Enter Wallet Amount:</p>
+        <input type="number" id="initialAmount" min="10" value="100" />
+        <br />
+        <button onclick="startGame()">Start</button>
+      </div>
+    </div>
+
+    <!-- Celebration Modal -->
+    <div
+      class="modal"
+      id="celebrationModal"
+      style="display: none; flex-direction: column"
+    >
+      <img
+        src="https://cdn-icons-png.flaticon.com/512/3159/3159066.png"
+        alt="Celebrate"
+      />
+      <h2>🎉 You Won ₹<span id="celebrateAmount"></span>!</h2>
+    </div>
+
+    <script>
+      let wallet = 0;
+      let round = 0;
+      const costPerTry = 10;
+
+      function startGame() {
+        const amount = parseInt(document.getElementById("initialAmount").value);
+        if (isNaN(amount) || amount < 10) {
+          alert("Minimum ₹10 required to start!");
+          return;
+        }
+        wallet = amount;
+        round = 0;
+        document.getElementById("wallet").textContent = wallet;
+        document.getElementById("round").textContent = round;
+        document.getElementById("startModal").style.display = "none";
+      }
+
+      function scratchCard() {
+        const card = document.getElementById("scratchCard");
+        if (card.classList.contains("revealed")) return;
+        if (wallet < costPerTry) {
+          alert("Not enough balance!");
+          return;
+        }
+
+        card.classList.add("shaking");
+        setTimeout(() => card.classList.remove("shaking"), 300);
+
+        wallet -= costPerTry;
+        round++;
+        updateUI(true);
+
+        const resultText = document.getElementById("resultText");
+        const chance = Math.random();
+        let rewardText = "Good Luck!";
+
+        if (chance > 0.7) {
+          const reward = Math.floor(Math.random() * (round * 5)) + 2;
+          rewardText = `₹${reward}`;
+          animateFlyToWallet(reward);
+          setTimeout(() => {
+            wallet += reward;
+            updateUI(true);
+          }, 1000);
+          showCelebration(reward);
+        }
+
+        resultText.textContent = rewardText;
+        card.classList.add("revealed");
+        document.getElementById("tryAgainBtn").style.display = "block";
+      }
+
+      function updateUI(animate = false) {
+        const walletEl = document.getElementById("wallet");
+        walletEl.textContent = wallet;
+        if (animate) {
+          walletEl.classList.add("animated");
+          setTimeout(() => walletEl.classList.remove("animated"), 500);
+        }
+        document.getElementById("round").textContent = round;
+      }
+
+      function animateFlyToWallet(amount) {
+        const fly = document.createElement("div");
+        fly.className = "fly";
+        fly.textContent = `+₹${amount}`;
+        fly.style.left = "50%";
+        fly.style.top = "50%";
+        document.body.appendChild(fly);
+        setTimeout(() => document.body.removeChild(fly), 1000);
+      }
+
+      function resetCard() {
+        const card = document.getElementById("scratchCard");
+        const resultText = document.getElementById("resultText");
+        resultText.textContent = "???";
+        card.classList.remove("revealed");
+        document.getElementById("tryAgainBtn").style.display = "none";
+        showHint();
+      }
+
+      function showHint() {
+        const hint = document.getElementById("hint");
+        hint.style.display = "block";
+        hint.style.animation = "fadeInOut 3s forwards";
+        setTimeout(() => {
+          hint.style.display = "none";
+        }, 3000);
+      }
+
+      function showCelebration(amount) {
+        const modal = document.getElementById("celebrationModal");
+        document.getElementById("celebrateAmount").textContent = amount;
+        modal.style.display = "flex";
+        setTimeout(() => {
+          modal.style.display = "none";
+        }, 5000);
+      }
+    </script>
+  </body>
+</html>
