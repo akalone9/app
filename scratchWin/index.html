@@ -29,7 +29,6 @@
         flex-direction: column;
         align-items: center;
         width: 100%;
-        padding: 10px;
       }
 
       .top-bar {
@@ -162,7 +161,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        z-index: 1000;
+        z-index: 1;
       }
 
       .modal-content {
@@ -175,7 +174,7 @@
 
       .modal-content input {
         padding: 10px;
-        font-size: 1.2rem;
+        font-size: 1.25rem;
         width: 100px;
         margin-top: 10px;
         text-align: center;
@@ -250,11 +249,11 @@
       #celebrationModal {
         display: none;
         position: fixed;
-        z-index: 2000;
+        z-index: 2;
         top: 0;
         left: 0;
         width: 100vw;
-        height: 100vh;
+        height: 99vh;
         background-color: rgba(0, 0, 0, 0.8);
         justify-content: center;
         align-items: center;
@@ -265,7 +264,7 @@
       }
 
       #celebrationModal img {
-        width: 150px;
+        width: 160px;
         animation: bounceCelebrate 1s infinite;
         margin-bottom: 20px;
       }
@@ -310,7 +309,7 @@
   <body>
     <div class="game-container">
       <div class="top-bar">
-        <div>💰 Wallet: ₹<span class="wallet-amount" id="wallet">0</span></div>
+        <div>💰 Wallet: ₹ <span class="wallet-amount" id="wallet">0</span></div>
         <div>🎯: <span id="round">0</span></div>
       </div>
 
@@ -372,7 +371,6 @@
         const card = document.getElementById("scratchCard");
         if (card.classList.contains("revealed")) return;
         if (wallet < costPerTry) {
-          alert("Not enough balance!");
           location.reload();
           return;
         }
@@ -390,7 +388,7 @@
 
         if (chance > 0.7) {
           const reward = Math.floor(Math.random() * (round * 5)) + 2;
-          rewardText = `₹${reward}`;
+          rewardText = `₹ ${reward}`;
           animateFlyToWallet(reward);
           setTimeout(() => {
             wallet += reward;
