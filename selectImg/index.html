@@ -56,8 +56,8 @@
       .game-container {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-        gap: 15px;
-        padding: 20px;
+        gap: 12px;
+        padding: 12px;
         background: #ffffffdd;
         border-radius: 20px;
         max-width: 420px;
@@ -164,7 +164,7 @@
   <body>
     <h1 id="gameHeader">Select a Position</h1>
     <div class="hint-wrapper">
-      <div id="hint">💡 Double Click to View Image</div>
+      <div id="hint">💡 Click to View Image</div>
     </div>
     <div class="game-container" id="gameContainer"></div>
     <button id="restartBtn" onclick="restartGame()">Restart</button>
@@ -285,7 +285,7 @@
         card.appendChild(desc);
         gameContainer.appendChild(card);
 
-        card.addEventListener("dblclick", () => {
+        card.addEventListener("click", () => {
           if (selectedCard) return;
           selectedCard = card;
           card.classList.add("active");
