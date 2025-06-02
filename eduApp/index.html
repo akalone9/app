@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>A to Z Alphabets</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="icon.png" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="icon.png" />
+    <meta name="theme-color" content="#ffdee9" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="#ffdee9" />
+    <meta name="msapplication-navbutton-color" content="#ffdee9" />
+    <style>
+      body {
+        margin: 0;
+        font-family: "Comic Sans MS", cursive, sans-serif;
+        background: linear-gradient(to bottom, #ffdee9, #b5fffc);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      h1 {
+        text-align: center;
+        color: #ff3399;
+        margin-bottom: 20px;
+        font-size: 2.5rem;
+      }
+
+      .letters-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+        gap: 20px;
+        width: 100%;
+        max-width: 600px;
+      }
+
+      .letter-button {
+        background-color: #ffcc00;
+        color: #333;
+        border: none;
+        border-radius: 16px;
+        font-size: 2.5rem;
+        padding: 25px 0;
+        text-align: center;
+        transition: transform 0.2s, background-color 0.3s;
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+      }
+
+      .letter-button:hover {
+        transform: scale(1.1);
+        background-color: #ff9900;
+      }
+
+      .show-letter {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 8rem;
+        background: white;
+        padding: 50px 60px;
+        border-radius: 25px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        display: none;
+        z-index: 10;
+        color: #ff3399;
+        animation: popIn 0.5s ease-out;
+      }
+
+      @keyframes popIn {
+        from {
+          transform: translate(-50%, -50%) scale(0.5);
+          opacity: 0;
+        }
+        to {
+          transform: translate(-50%, -50%) scale(1);
+          opacity: 1;
+        }
+      }
+
+      @media (max-width: 480px) {
+        h1 {
+          font-size: 1.75rem;
+        }
+        .letter-button {
+          font-size: 1.3rem;
+          padding: 15px 0;
+        }
+        .show-letter {
+          font-size: 5rem;
+          padding: 30px 40px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>A से Z तक - अक्षर पहचानें</h1>
+    <div class="letters-container" id="letters"></div>
+
+    <div class="show-letter" id="popup"></div>
+
+    <script>
+      const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+      const container = document.getElementById("letters");
+      const popup = document.getElementById("popup");
+
+      letters.forEach((letter) => {
+        const btn = document.createElement("button");
+        btn.className = "letter-button";
+        btn.innerText = letter;
+        btn.style.backgroundColor = getRandomColor();
+
+        btn.addEventListener("click", () => {
+          popup.innerText = letter;
+          popup.style.display = "block";
+          setTimeout(() => {
+            popup.style.display = "none";
+          }, 1000);
+
+          // अक्षर की आवाज़ चलाएं
+          const audio = new Audio(`sounds/${letter}.mp3`);
+          audio.play().catch((err) => {
+            console.log(`Audio for ${letter} not found or couldn't be played.`);
+          });
+        });
+
+        container.appendChild(btn);
+      });
+
+      function getRandomColor() {
+        const colors = [
+          "#ff9999",
+          "#66ccff",
+          "#99ff99",
+          "#ffcc99",
+          "#ffccff",
+          "#ccffcc",
+          "#ffd700",
+          "#ff69b4",
+        ];
+        return colors[Math.floor(Math.random() * colors.length)];
+      }
+    </script>
+  </body>
+</html>
