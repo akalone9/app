@@ -7,7 +7,6 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
     />
-    <link rel="icon" href="icon.png" type="image/x-icon" />
     <meta
       name="theme-color"
       content="#82caff"
@@ -81,6 +80,83 @@
         width: 510px;
         max-width: calc(100% - 30px);
         margin: 0px 15px;
+      }
+
+      .loginDiv_Box {
+        height: 100vh;
+        background-color: var(--hover-color);
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--hover-color),
+          var(--secondary-color)
+        );
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      .login-box {
+        width: calc(100% - 80px);
+        background: var(--white-color);
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.3);
+        text-align: center;
+        animation: slideUp 0.8s ease;
+      }
+
+      @keyframes slideUp {
+        from {
+          transform: translateY(100%);
+        }
+        to {
+          transform: translateY(0);
+        }
+      }
+
+      .loginUserIcon {
+        position: relative;
+        top: -80px;
+        font-size: 95px;
+        padding: 5px;
+        background: var(--white-color);
+        border-radius: 50%;
+        color: var(--primary-color);
+      }
+
+      .login-box h2 {
+        text-align: center;
+        margin-top: -75px;
+        margin-bottom: 30px;
+        color: var(--primary-color);
+      }
+
+      .login-box input {
+        width: 100%;
+        padding: 14px 15px;
+        margin: 12px 0;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        font-size: 16px;
+      }
+
+      .login-box button {
+        width: 100%;
+        padding: 14px;
+        margin-top: 10px;
+        margin-bottom: 20px;
+        background: var(--primary-color);
+        color: var(--white-color);
+        font-size: 18px;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      .login-box button:hover {
+        background: var(--hover-color);
       }
 
       .navbar {
@@ -334,12 +410,6 @@
       <div class="box"> Loan EMI </div>
     </div>
   </div>
-
-  <div class="storyBoxDiv">
-      <img src="https://akalone9.github.io/app/khatabook/icon.png" class="imgStory" />
-      <div> Hi </div>
-      <div> Hello </div>
-  </div>
 `;
       var navMenuItem = `
   <div class="popup-content">
@@ -399,6 +469,19 @@
         <div class="bodyTitleH"> Tools </div>
         Loan EMI Calculator for SHG Members 
         </div>`;
+      var loginHTML = `
+      <div class="loginDiv_Box">
+
+    <div class="login-box">
+    <i class="fa fa-user-circle loginUserIcon"></i>
+      <h2>User LogIn</h2>
+      <input type="text" placeholder="User Name">
+      <input type="password" placeholder="Password">
+      <button>Login</button>
+    </div>
+
+  </div>
+      `;
 
       function getUrl() {
         const htmlTag = document.getElementById("mainBodyTag");
@@ -414,6 +497,8 @@
           newTag = topNavbar + nav3HTML;
         } else if (section === "nav4") {
           newTag = topNavbar + nav4HTML;
+        } else if (section === "login") {
+          newTag = loginHTML;
         } else {
           newTag = topNavbar + pageBodyTag;
         }
