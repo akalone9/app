@@ -4,12 +4,10 @@
     <meta charset="UTF-8" />
     <title>UPSRLM Budaun</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
-    <meta name="theme-color" content="#82caff" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="#82caff" />
-    <meta name="msapplication-navbutton-color" content="#82caff">
     <link rel="icon" href="icon.png" type="image/x-icon" />
     <link rel="apple-touch-icon" href="icon.png" />
     <meta name="msapplication-TileImage" content="icon.png" />
+    <meta name="theme-color" content="#82caff" id="themeColor" />
     <style>
       @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
 
@@ -42,40 +40,32 @@
         --error-color: #e53935;
       }
 
-      /* Dark Theme - Midnight Purple */
-      @media (prefers-color-scheme: dark) {
-        .themeColor {
-          background: #00bfff;
-        }
-      }
-
       body {
         background: var(--background-color);
-        min-height: 100vh;
         display: flex;
         justify-content: center;
       }
 
-      .modal-Msg {
+      .lodingMsg {
         text-align: center;
         height: 240px;
         margin-top: calc(50vh - 150px);
       }
 
-      .modal-Msg .imgIcon {
+      .lodingMsg .imgIcon {
         width: 144px;
         height: 144px;
         margin-bottom: 10px;
         border-radius: 50%;
       }
 
-      .modal-Msg h2 {
+      .lodingMsg h2 {
         color: var(--error-color);
         text-shadow: 2px 2px var(--warning-color);
       }
 
       .container {
-        width: 510px;
+        width: 520px;
         max-width: calc(100% - 30px);
         margin: 0px 15px;
       }
@@ -188,7 +178,7 @@
         color: var(--white-color);
       }
 
-      .title {
+      .navTitle {
         font-size: 21px;
         font-weight: bold;
         color: var(--white-color);
@@ -227,13 +217,23 @@
         transform: scale(1.05);
       }
 
-      .storyBoxDiv {
-        padding: 20px;
-        border-radius: 10px;
-        width: 96%;
+      .pageBody {
+        padding: 5px 15px;
+        width: 100%;
+        height: calc(100vh - 85px);
         font-weight: bold;
         text-align: center;
-        margin: auto;
+        background-color: var(--background-color);
+      }
+
+      .rediusDiv {
+        position: absolute;
+        width: 100%;
+        background: var(--background-color);
+        border-top-right-radius: 20px;
+        border-top-left-radius: 20px;
+        display: none;
+        z-index: 1;
       }
 
       .imgStory {
@@ -277,7 +277,7 @@
         }
       }
 
-      .popup a {
+      .popup .aLink {
         display: block;
         text-decoration: none;
         width: 100%;
@@ -339,6 +339,15 @@
         color: var(--success-color);
       }
 
+      .logoutBtn {
+        color: var(--error-color);
+        font-size: 16px;
+        font-weight: bold;
+        padding: 1px 10px 5px 10px;
+        border-radius: 5px;
+        border: var(--error-color) solid 1px;
+      }
+
       .flexItem {
         display: flex;
         align-items: center;
@@ -346,6 +355,24 @@
       }
 
       @media (max-width: 520px) {
+        #theme-color-meta {
+          content: "#306eff";
+        }
+        .container {
+          max-width: 100%;
+          margin: 0px;
+        }
+        .navbar {
+          border-radius: 0px;
+          padding: 12px 18px 30px 18px;
+          margin-top: 0px;
+          box-shadow: none;
+        }
+        .rediusDiv {
+          top: 62px;
+          height: 20px;
+          display: block;
+        }
         .popup {
           align-items: flex-end;
         }
@@ -372,11 +399,13 @@
 
   <body>
     <div class="container">
-      <!-- Navbar -->
       <div id="mainBodyTag">
-        <div class="modal-Msg">
+        <div class="lodingMsg">
           <div id="msgCode_HTML">
-            <img src="icon.png" class="imgIcon" />
+            <img
+              src="https://akalone9.github.io/app/iconPink.png"
+              class="imgIcon"
+            />
             <h2>UPSRLM</h2>
           </div>
         </div>
@@ -388,98 +417,123 @@
     <script>
       //.................................................
       var topNavbar = `
-  <div class="navbar">
-    <div class="icon-circle" onclick="openMenu()">
-      <i class="fa fa-navicon" style="font-size: 20px"></i>
-    </div>
-    <div class="title">UPSRLM Budaun</div>
-    <div class="icon-circle" onclick="openUser()">
-      <i class="fa fa-user-circle" style="font-size: 22px"></i>
-    </div>
-  </div>
-  `;
+              <div class="navbar">
+                <div class="icon-circle" onclick="openMenu()">
+                  <i class="fa fa-navicon" style="font-size: 20px"></i>
+                </div>
+                <div class="navTitle">UPSRLM Budaun</div>
+                <div class="icon-circle" onclick="openUser()">
+                  <i class="fa fa-user-circle" style="font-size: 22px"></i>
+                </div>
+              </div>
+              `;
       var pageBodyTag = `
-  <div id="pageBodyTag">
-    <div class="bodyTitleH"> Home Page </div>
-    <div class="grid-box">
-      <div class="box"> Attendance </div>
-      <div class="box"> Sheet Link </div>
-      <div class="box"> Daily Work </div>
-      <div class="box"> Loan EMI </div>
-    </div>
-  </div>
-`;
+                  <div class="rediusDiv"> </div>
+              <div class="pageBody">
+                <div class="bodyTitleH"> Home Page </div>
+                <div class="grid-box">
+                  <a href="#nav1" class="box"> Attendance </a>
+                  <a href="#nav2" class="box"> Sheet Link </a>
+                  <a href="#nav3" class="box"> Daily Work </a>
+                  <a href="#nav4" class="box"> Loan EMI </a>
+                </div>
+              </div>
+            `;
       var navMenuItem = `
-  <div class="popup-content">
-    <div class="flexItem">
-      <label class="lableNav">Menu</label>
-      <label onclick="closePopup()" class="BtnClose">
-        <i class="fa fa-times"></i>
-      </label>
-    </div>
-    <br />
-    <a href="#homePage" onclick="closePopup()"> Home </a>
-    <a href="#nav1" onclick="closePopup()"> Attendance </a>
-    <a href="#nav2" onclick="closePopup()"> Sheet Link </a>
-    <a href="#nav3" onclick="closePopup()"> Daily Work </a>
-    <a href="#nav4" onclick="closePopup()"> Loan EMI </a>
-  </div>
-`;
+              <div class="popup-content">
+                <div class="flexItem">
+                  <label class="lableNav">Menu</label>
+                  <label onclick="closePopup()" class="BtnClose">
+                    <i class="fa fa-times"></i>
+                  </label>
+                </div>
+                <br />
+                <a href="#homePage" onclick="closePopup()" class="aLink"> Home </a>
+                <a href="#nav1" onclick="closePopup()" class="aLink"> Attendance </a>
+                <a href="#nav2" onclick="closePopup()" class="aLink"> Sheet Link </a>
+                <a href="#nav3" onclick="closePopup()" class="aLink"> Daily Work </a>
+                <a href="#nav4" onclick="closePopup()" class="aLink"> Loan EMI </a>
+              </div>
+            `;
 
       var userOption = `
-  <div class="popup-content">
-    <div class="flexItem">
-      <label class="lableNav">User</label>
-      <label onclick="closePopup()" class="BtnClose">
-        <i class="fa fa-times"></i>
-      </label>
-    </div>  
+              <div class="popup-content">
+                <div class="flexItem">
+                  <label class="lableNav">User</label>
+                  <label onclick="closePopup()" class="BtnClose">
+                    <i class="fa fa-times"></i>
+                  </label>
+                </div>
 
-  <div class="flex center">
-    <i class="fa fa-user-circle userIconMax"></i>
-  </div>
+              <div class="flex center">
+                <i class="fa fa-user-circle userIconMax"></i>
+              </div>
 
-  <div class="flex center">
-    <label class="userName"> Amit Alone </label>
-  </div>
+              <div class="flex center">
+                <label class="userName"> Amit Alone </label>
+              </div>
 
-  <div class="userTitle" style="text-align: center; margin-top: 50px;"> User Information ! </div>
-  <div class="flex center" style="margin-bottom: 20px">
-    <label> App's All Data are Local Database, <br />Do Not Clear App, Delete all Data. </label>
-  </div>
+              <div class="flex center">
+                <a href="#login" class="logoutBtn" onclick="logoutUser()"> Logout </a>
+              </div>
 
-  </div>
-`;
+              <div class="userTitle" style="text-align: center; margin-top: 50px;"> User Information ! </div>
+              <div class="flex center" style="margin-bottom: 20px">
+                <label> App's All Data are Local Database, <br />Do Not Clear App, Delete all Data. </label>
+              </div>
 
-      var nav1HTML = `<div class="storyBoxDiv"> 
-        <div class="bodyTitleH"> Attendance </div>
-        Punch In for Add Attendance 
-        </div>`;
-      var nav2HTML = `<div class="storyBoxDiv"> 
-        <div class="bodyTitleH"> Google Sheet </div>
-        Google Sheet for You 
-        </div>`;
-      var nav3HTML = `<div class="storyBoxDiv"> 
-        <div class="bodyTitleH"> Work Done </div>
-        Daily Work Done 
-        </div>`;
-      var nav4HTML = `<div class="storyBoxDiv"> 
-        <div class="bodyTitleH"> Tools </div>
-        Loan EMI Calculator for SHG Members 
-        </div>`;
+              </div>
+            `;
+
+      var nav1HTML = `<div class="rediusDiv"> </div>
+                  <div class="pageBody">
+                    <div class="bodyTitleH"> Attendance </div>
+                    Punch In for Add Attendance
+                    </div>`;
+      var nav2HTML = `<div class="rediusDiv"> </div>
+                  <div class="pageBody">
+                    <div class="bodyTitleH"> Google Sheet </div>
+                    Google Sheet for You
+                    </div>`;
+      var nav3HTML = `<div class="rediusDiv"> </div>
+                  <div class="pageBody">
+                    <div class="bodyTitleH"> Work Done </div>
+                    Daily Work Done
+                    </div>`;
+      var nav4HTML = `<div class="rediusDiv"> </div>
+                  <div class="pageBody">
+                    <div class="bodyTitleH"> Tools </div>
+                    Loan EMI Calculator for SHG Members
+                    </div>`;
       var loginHTML = `
-      <div class="loginDiv_Box">
+                  <div class="loginDiv_Box">
 
-    <div class="login-box">
-    <i class="fa fa-user-circle loginUserIcon"></i>
-      <h2>User LogIn</h2>
-      <input type="text" placeholder="User Name">
-      <input type="password" placeholder="Password">
-      <button>Login</button>
-    </div>
+                <div class="login-box">
+                <i class="fa fa-user-circle loginUserIcon"></i>
+                  <h2>User LogIn </h2>
+                  <input type="text" placeholder="User Name" id="setUserName" />
+                  <input type="password" placeholder="Password" id="setUserPass" />
+                  <a href="#homePage"> <button onclick="setAsUser()"> Login </button> </a>
+                </div>
 
-  </div>
-      `;
+              </div>
+                  `;
+      function setAsUser() {
+        const user_name = document.getElementById("setUserName").value;
+        const user_pass = document.getElementById("setUserPass").value;
+        const userSet = {
+          full_name: "Amit Alone",
+          user_name: user_name,
+          user_pass: user_pass,
+        };
+        localStorage.setItem("logedUser", JSON.stringify(userSet));
+      }
+
+      function logoutUser() {
+        localStorage.removeItem("logedUser");
+      }
+
+      var themeColor = document.getElementById("themeColor");
 
       function getUrl() {
         const htmlTag = document.getElementById("mainBodyTag");
@@ -487,18 +541,21 @@
 
         var section = url.split("#")[1];
 
-        if (section === "nav1") {
-          newTag = topNavbar + nav1HTML;
-        } else if (section === "nav2") {
-          newTag = topNavbar + nav2HTML;
-        } else if (section === "nav3") {
-          newTag = topNavbar + nav3HTML;
-        } else if (section === "nav4") {
-          newTag = topNavbar + nav4HTML;
-        } else if (section === "login") {
+        if (!localStorage.getItem("logedUser")) {
           newTag = loginHTML;
+          closePopup();
         } else {
-          newTag = topNavbar + pageBodyTag;
+          if (section === "nav1") {
+            newTag = topNavbar + nav1HTML;
+          } else if (section === "nav2") {
+            newTag = topNavbar + nav2HTML;
+          } else if (section === "nav3") {
+            newTag = topNavbar + nav3HTML;
+          } else if (section === "nav4") {
+            newTag = topNavbar + nav4HTML;
+          } else {
+            newTag = topNavbar + pageBodyTag;
+          }
         }
         htmlTag.innerHTML = newTag;
       }
@@ -512,6 +569,7 @@
         } else {
           window.location.href = currentUrl + "#homePage";
         }
+        themeColor.setAttribute("content", "#306eff");
       }
       setTimeout(redirectToURL, 2000);
 
